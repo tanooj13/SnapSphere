@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Caption</title>
+</head>
+<body>
+    <h1>Update Caption</h1>
+    <form method="POST">
+        {% csrf_token %}
+        
+        <label for="id_description">Caption:</label>
+        <textarea name="description" id="id_description" rows="4" cols="50">{{ form.instance.description }}</textarea>
+        
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>
+

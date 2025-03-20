@@ -1,0 +1,43 @@
+{% extends 'nav.html' %}
+
+{% block content %}
+<h1>Feed</h1>
+{% if user.is_authenticated %}
+{% for snap in snaps %}
+<div class="snap">
+    <a href="{% url 'profile-view' snap.user.username %}">{{snap.user.username}}</a>
+    <img src="{{ snap.image.url }}" alt="Snap Image" width="300">
+    <p>{{ snap.description }}</p>
+
+    <!-- Like/Unlike Button -->
+    {% if snap.is_liked %}
+        <form method="POST" action="{% url 'like-snap' snap.id %}">
+            {% csrf_token %}
+            <button type="submit">Unlike</button>
+        </form>
+    {% else %}
+        <form method="POST" action="{% url 'like-snap' snap.id %}">
+            {% csrf_token %}
+            <button type="submit">Like</button>
+        </form>
+    {% endif %}  
+    
+    <a href="{% url 'save-snap' snap.id %}">
+        {% if snap.is_saved %}
+            Unsave
+        {% else %}
+            Save
+        {% endif %}
+    </a>
+
+    <p>{{ snap.likes.count }} Likes</p>
+    <a href="{% url 'comment-snap' snap.id %}">Comments</a>
+</div>
+{% endfor %}
+
+{% else %}
+    <h1>Welcome to SnapSphere</h1>
+    <p>Share your snaps with the world!</p>
+    <a href="{% url 'register' %}">Register</a>
+{% endif %}
+{% endblock %}

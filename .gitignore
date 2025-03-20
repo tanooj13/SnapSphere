@@ -1,0 +1,77 @@
+# Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual Environment
+venv/
+env/
+*.env
+*.venv
+Pipfile
+Pipfile.lock
+
+# Django-specific files
+*.sqlite3
+db.sqlite3
+*.log
+
+# IDE / Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node Modules (if using frontend tools)
+node_modules/
+
+# Static and Media files
+staticfiles/
+media/
+
+# Migrations (optional, as you may regenerate them)
+**/migrations/*.py
+!**/migrations/__init__.py
+
+# Compiled files
+*.out
+*.class
+
+# MacOS / System files
+.DS_Store
+Thumbs.db
+
+# Secrets and Credentials
+*.env
+.env.*
+
+# Cache and Temp files
+*.bak
+*.tmp
+*.cache
+*.mo
+*.pot
+
+# Coverage and Test Reports
+.coverage
+htmlcov/
+*.cover
+*.pycoverage
+nosetests.xml
+coverage.xml
+
+# Deployment Files
+*.key
+*.pem
+*.crt
+
+# Docker
+*.dockerfile
+docker-compose.yml
+
+# Other ignored files
+*.log
+*.tar
+*.zip
+*.gz

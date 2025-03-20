@@ -1,0 +1,17 @@
+{% extends 'nav.html' %}
+
+{% block content %}
+
+<h1>Your Saved Snaps</h1>
+{% for saved in saved_snaps %}
+    <div class="snap">
+        <img src="{{ saved.snap.image.url }}" alt="Snap">
+        <p>{{ saved.snap.description }}</p>
+        <a href="{% url 'save-snap' saved.snap.id %}">Unsave</a>
+    </div>
+{% empty %}
+    <p>No saved snaps yet.</p>
+{% endfor %}
+
+
+{% endblock %}

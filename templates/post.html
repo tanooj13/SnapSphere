@@ -1,0 +1,22 @@
+<h1>POST</h1>
+{% block content %}
+
+<form action="" method = "POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <label for="snap">Snap:</label>
+    {{ snap_form.image }}
+
+    <label for="description">Caption:</label>
+    {{ snap_form.description }}
+
+    <label for="category">Category:</label>
+    {{ snap_form.category }}
+
+    <button type="submit">Post</button>
+
+
+</form>
+<a href="{% url 'home' %}">back</a>
+
+{% endblock %}

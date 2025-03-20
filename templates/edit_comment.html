@@ -1,0 +1,7 @@
+<h3>Edit Comment "{{comment.text}}"?</h3>
+<form action="" method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit">Edit Comment</button>
+    <a href="{% url 'comment-snap' snap.id %}"></a>
+</form>

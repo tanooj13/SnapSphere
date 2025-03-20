@@ -1,0 +1,7 @@
+<form action="" method = "POST">
+    {% csrf_token %}
+    <h4>Are you sure you want to Delete the comment:</h4>
+    <p>{{comment.text}}?</p>
+    <button type = "submit">Yes,Delete</button>
+    <a href="{% url 'comment-snap' snap.id %}">Go Back</a>
+</form>

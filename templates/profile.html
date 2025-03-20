@@ -1,0 +1,55 @@
+{% extends 'nav.html' %}
+{% load static %}
+
+
+{% block content %}
+<!-- {% if profile.profile_picture %}
+    <img src="{{ profile.profile_picture.url }}" alt="{{ profile.user.username }}">
+{% else %}
+    <img src="/media/profile_pics/default_profile_picture.jpg" alt="Default Profile Picture">
+{% endif %}
+<h3>{{ profile.user.username }}</h3>
+<label for="bio">Bio</label>
+<p>{{ profile.bio }}</p>
+{% for snap in snaps %}
+    {% if request.user == user %}
+        <a href="{% url 'delete-snap' snap.id %}">Delete</a>
+        <a href="{% url 'update-snap' snap.id %}">Update</a>
+    {% endif %}
+    <img src="{{ snap.image.url }}" alt="{{ snap.description }}">
+    caption:<p>{{ snap.description }}</p>
+    category:<p>{{ snap.category }}</p>
+{% endfor %}
+
+<a href="{% url 'home' %}">back</a> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ profile_user.username }}'s Profile</title>
+</head>
+<body>
+    <h1>{{ profile_user.username }}</h1>
+    {% if profile_user.profile.profile_picture %}
+        <img src="{{ profile_user.profile.profile_picture.url }}" alt="Profile Picture">
+    {% else %}
+        <img src="/media/profile_pics/default_profile_picture.jpg" alt="Default Profile Picture">
+    {% endif %}
+    <p>{{ profile_user.profile.bio }}</p>
+
+    <h2>Snaps by {{ profile_user.username }}</h2>
+    {% for snap in snaps %}
+        {% if request.user == snap.user %}
+            <a href="{% url 'delete-snap' snap.id %}">Delete</a>
+            <a href="{% url 'update-snap' snap.id %}">Update</a>
+        {% endif %}
+        <div class="snap-card">
+            <img src="{{ snap.image.url }}" alt="Snap Image">
+            <p>{{ snap.description }}</p>
+        </div>
+    {% endfor %}
+
+    <p>Total Likes Received: {{ total_likes }}</p>
+</body>
+</html>
+{% endblock %}
