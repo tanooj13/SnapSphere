@@ -17,6 +17,7 @@ urlpatterns = [
     path('edit-comment/<int:snap_id>/<int:comment_id>',views.edit_comment,name='edit-comment'),
     path('save-snap/<int:snap_id>/',views.save_snap,name='save-snap'),
     path('saved-snaps/',views.show_saved,name='saved-snaps'),
+    path('delete-acoount/',views.delete_account,name='delete-account'),
     
 
 ]

@@ -1,0 +1,16 @@
+{% extends 'nav.html' %}
+
+{% block content %}
+    <h2>Delete Account</h2>
+    <p>Are you sure you want to delete your account? This action is irreversible.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" style="background-color: red; color: white; padding: 10px 20px; border: none; cursor: pointer;">
+            Delete My Account
+        </button>
+    </form>
+    
+    <br>
+    <a href="{% url 'home' %}" style="color: blue;">Cancel</a>
+{% endblock %}

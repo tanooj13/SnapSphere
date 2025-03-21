@@ -5,6 +5,7 @@ from .models import Snap,Comment,Profile,Like,SavedSnap
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -55,28 +56,26 @@ def logout(request):
     return redirect('home')
 
 def home(request):
+    query = request.GET.get('q', '')
+    filter_type = request.GET.get('filter', 'recent')  # Default is 'recent'
+
     snaps = Snap.objects.all()
-    filter_option = request.GET.get('filter', 'recent')  # Default: most recent
-    query = request.GET.get('q','')
+
+    # Apply Search Filter
     if query:
-        snaps = Snap.objects.filter(description__icontains=query) | Snap.objects.filter(category__icontains=query)| Snap.objects.filter(user__username__icontains=query)
-    else:
-        snaps = Snap.objects.all().order_by('-created_at')
+        snaps = snaps.filter(description__icontains=query) | snaps.filter(category__icontains=query) | snaps.filter(user__username__icontains=query)
 
-    if filter_option == 'most_liked_desc':
-        snaps = snaps.order_by('-likes_count')  # Most liked first
-    elif filter_option == 'most_liked_asc':
-        snaps = snaps.order_by('likes_count')   # Least liked first
-    elif filter_option == 'oldest':
-        snaps = snaps.order_by('created_at')    # Oldest first
-    else:  # Default is 'recent'
-        snaps = snaps.order_by('-created_at') 
+    # Apply Sorting Filter
+    if filter_type == 'most_liked':
+        snaps = snaps.order_by('-likes_count')  # Most Liked First
+    elif filter_type == 'least_liked':
+        snaps = snaps.order_by('likes_count')  # Least Liked First
+    elif filter_type == 'oldest':
+        snaps = snaps.order_by('created_at')  # Oldest First
+    else:  # Default to 'recent'
+        snaps = snaps.order_by('-created_at')  # Newest First
 
-    for snap in snaps:
-        snap.is_liked = snap.likes.filter(user=request.user).exists()
-        snap.is_saved = SavedSnap.objects.filter(user=request.user, snap=snap).exists()
-    context = {"snaps":snaps,"query":query,'filter_option': filter_option}
-    return render(request,'home.html',context)
+    return render(request, 'home.html', {'snaps': snaps, 'query': query, 'filter_type': filter_type})
 
 def post(request):
     if (request.method == 'POST'):
@@ -124,6 +123,7 @@ def profile(request):
     profile, created = Profile.objects.get_or_create(user=user)
 
     snaps = Snap.objects.filter(user=user)
+    
     context = {"profile": profile, "snaps": snaps, "created": created}
 
     return render(request, 'profile.html', context)
@@ -137,6 +137,7 @@ def like(request,snap_id):
         like.delete()
     else:
         Like.objects.create(user=request.user,snap=snap)
+    snap.update_likes_count()
 
     return redirect('home')
 
@@ -151,6 +152,7 @@ def comment(request, snap_id):
             comment.user = request.user
             comment.snap = snap
             comment.save()
+            snap.update_comments_count() 
             messages.success(request,'Comment Posted Successfully!!!')
             return redirect(request.path)
     else:
@@ -165,6 +167,7 @@ def delete_comment(request, snap_id, comment_id):
     if request.method == 'POST' and comment.user == request.user:
         comment.delete()
         messages.success(request, "Comment Deleted Successfully...")
+        snap.update_comments_count()
         return redirect('comment-snap', snap_id)  
 
     context = {"comment": comment, "snap": snap}
@@ -200,10 +203,29 @@ def show_saved(request):
     context = {"saved_snaps":saved_snaps}
     return render(request,'saved_snaps.html',context)
 
+@login_required
 def profile_view(request,username):
     profile_user = get_object_or_404(User, username=username)
     snaps = Snap.objects.filter(user=profile_user)
     total_likes = sum(snap.likes.count() for snap in snaps)
+    if request.method == "POST":
+        bio = request.POST.get("bio")
+        profile, created = Profile.objects.get_or_create(user=profile_user)
+        profile.bio = bio
+        profile.save()
+        messages.success(request, "Bio updated successfully!")
+        return redirect('profile-view',username=username)
     context={"snaps":snaps,"total_likes":total_likes,"profile_user":profile_user}
     return render(request,'profile.html',context)
+
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, "Your account has been deleted.")
+        return redirect('home')
+    return render(request,'delete_account.html')
+
+
 

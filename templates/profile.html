@@ -36,6 +36,13 @@
         <img src="/media/profile_pics/default_profile_picture.jpg" alt="Default Profile Picture">
     {% endif %}
     <p>{{ profile_user.profile.bio }}</p>
+    {% if request.user == profile_user %}
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="bio" rows="3" cols="50" for = "bio">{{ profile_user.profile.bio }}</textarea><br>
+        <button type="submit">Update Bio</button>
+    </form>
+    {% endif %}
 
     <h2>Snaps by {{ profile_user.username }}</h2>
     {% for snap in snaps %}
