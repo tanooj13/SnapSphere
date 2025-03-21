@@ -3,6 +3,10 @@
 {% block content %}
 <h1>Feed</h1>
 {% if user.is_authenticated %}
+<form method="GET" action="">
+    <input type="text" name="q" placeholder="Search snaps..." value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
 {% for snap in snaps %}
 <div class="snap">
     <a href="{% url 'profile-view' snap.user.username %}">{{snap.user.username}}</a>

@@ -14,6 +14,8 @@ class Snap(models.Model):
     category = models.CharField(max_length=255, default='General')
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+
 class Like(models.Model):
     snap = models.ForeignKey(Snap, on_delete=models.CASCADE, related_name='likes')
     user = models.ForeignKey(User, on_delete=models.CASCADE)

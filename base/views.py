@@ -55,12 +55,27 @@ def logout(request):
     return redirect('home')
 
 def home(request):
-    snaps = Snap.objects.all().order_by('-created_at')
+    snaps = Snap.objects.all()
+    filter_option = request.GET.get('filter', 'recent')  # Default: most recent
+    query = request.GET.get('q','')
+    if query:
+        snaps = Snap.objects.filter(description__icontains=query) | Snap.objects.filter(category__icontains=query)| Snap.objects.filter(user__username__icontains=query)
+    else:
+        snaps = Snap.objects.all().order_by('-created_at')
+
+    if filter_option == 'most_liked_desc':
+        snaps = snaps.order_by('-likes_count')  # Most liked first
+    elif filter_option == 'most_liked_asc':
+        snaps = snaps.order_by('likes_count')   # Least liked first
+    elif filter_option == 'oldest':
+        snaps = snaps.order_by('created_at')    # Oldest first
+    else:  # Default is 'recent'
+        snaps = snaps.order_by('-created_at') 
 
     for snap in snaps:
         snap.is_liked = snap.likes.filter(user=request.user).exists()
         snap.is_saved = SavedSnap.objects.filter(user=request.user, snap=snap).exists()
-    context = {"snaps":snaps}
+    context = {"snaps":snaps,"query":query,'filter_option': filter_option}
     return render(request,'home.html',context)
 
 def post(request):
@@ -191,3 +206,4 @@ def profile_view(request,username):
     total_likes = sum(snap.likes.count() for snap in snaps)
     context={"snaps":snaps,"total_likes":total_likes,"profile_user":profile_user}
     return render(request,'profile.html',context)
+
